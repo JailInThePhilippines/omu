@@ -201,7 +201,6 @@ I love being with you, Onika. Thank you for being a part of my life.`;
             typeWriter();
             setInterval(createHeart, 2000);
 
-            // Create initial flowers
             for (let i = 0; i < 15; i++) {
                 setTimeout(() => {
                     createFlower(
@@ -212,7 +211,6 @@ I love being with you, Onika. Thank you for being a part of my life.`;
             }
         });
 
-        // Add new flowers on click
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('flower')) return;
             createFlower(e.clientX, e.clientY);
