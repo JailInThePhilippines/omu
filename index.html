@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Valentine's Letter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .letter {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 2rem;
+            min-height: 200px;
+        }
+
+        .signature {
+            font-style: italic;
+            text-align: right;
+            opacity: 0;
+        }
+
+        .heart {
+            position: fixed;
+            font-size: 20px;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .flower {
+            position: fixed;
+            font-size: 30px;
+            user-select: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .flower:hover {
+            transform: scale(1.2);
+        }
+
+        .bouquet-container {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .bouquet {
+            font-size: 40px;
+            animation: bouquetWave 3s infinite ease-in-out;
+        }
+
+        @keyframes bouquetWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .flower-particles {
+            position: fixed;
+            pointer-events: none;
+            font-size: 15px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="letter" id="letter"></div>
+        <div class="signature">With love,<br>Leighnard</div>
+    </div>
+
+    <div class="bouquet-container">
+        <div class="bouquet">💐</div>
+        <div class="bouquet" style="animation-delay: 0.5s">🌹</div>
+        <div class="bouquet" style="animation-delay: 1s">💐</div>
+        <div class="bouquet" style="animation-delay: 1.5s">🌹</div>
+    </div>
+
+    <script>
+        const letterText = `Dear Onika Mariel Umayam,
+
+Every time we're together, hours feel so short. I am grateful to be part of your life, Onika. I will always treasure you, care for you, and wait for you.
+
+Onika, my intentions for you are pure. I will always be by your side, and I will always be your admirer.
+
+I love being with you, Onika. Thank you for being a part of my life.`;
+
+        let index = 0;
+        const speed = 50;
+        const letter = document.getElementById('letter');
+        const flowers = ['🌸', '🌺', '🌷', '🌹', '🌻', '💐'];
+
+        function typeWriter() {
+            if (index < letterText.length) {
+                letter.innerHTML += letterText.charAt(index);
+                index++;
+                setTimeout(typeWriter, speed);
+            } else {
+                gsap.to('.signature', {
+                    opacity: 1,
+                    duration: 1,
+                    delay: 0.5
+                });
+            }
+        }
+
+        function createFlower(x, y) {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
+            flower.style.left = x + 'px';
+            flower.style.top = y + 'px';
+            document.body.appendChild(flower);
+
+            flower.addEventListener('click', (e) => {
+                createFlowerParticles(e.clientX, e.clientY);
+                flower.remove();
+            });
+
+            gsap.to(flower, {
+                y: '+=' + (Math.random() * 100 - 50),
+                x: '+=' + (Math.random() * 100 - 50),
+                rotation: 'random(-45, 45)',
+                duration: 10,
+                ease: 'power1.inOut'
+            });
+        }
+
+        function createFlowerParticles(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'flower-particles';
+                particle.innerHTML = '✨';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                document.body.appendChild(particle);
+
+                gsap.to(particle, {
+                    x: 'random(-100, 100)',
+                    y: 'random(-100, 100)',
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power2.out',
+                    onComplete: () => particle.remove()
+                });
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '100vh';
+            document.body.appendChild(heart);
+
+            gsap.to(heart, {
+                y: -window.innerHeight - 100,
+                x: 'random(-100, 100)',
+                rotation: 'random(-90, 90)',
+                duration: 'random(4, 8)',
+                ease: 'power1.out',
+                onComplete: () => heart.remove()
+            });
+        }
+
+        window.addEventListener('load', () => {
+            gsap.to('.container', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power2.out'
+            });
+            typeWriter();
+            setInterval(createHeart, 2000);
+
+            // Create initial flowers
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    createFlower(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 300);
+            }
+        });
+
+        // Add new flowers on click
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('flower')) return;
+            createFlower(e.clientX, e.clientY);
+        });
+    </script>
+</body>
+</html>
